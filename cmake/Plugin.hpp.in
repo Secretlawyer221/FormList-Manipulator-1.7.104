@@ -9,20 +9,27 @@
 #include <REL/Relocation.h>
 #include <boost/regex.hpp>
 #include <string_view>
+#include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <ClibUtil/utils.hpp>
 #include <ankerl/unordered_dense.h>
 
 using namespace std::literals;
 
-namespace logger = SKSE::log;
+namespace logger
+{
+	using spdlog::info;
+	using spdlog::warn;
+	using spdlog::error;
+	using SKSE::log::log_directory;
+}
 namespace string = clib_util::string;
 
 using RNG = clib_util::RNG;
 
 namespace util
 {
-	using SKSE::stl::report_and_fail;
+	inline void report_and_fail(std::string_view msg) { REX::FAIL("{}", std::string(msg)); }
 }
 
 #define DLLEXPORT __declspec(dllexport)

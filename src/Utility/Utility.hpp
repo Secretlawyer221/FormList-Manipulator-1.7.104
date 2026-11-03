@@ -53,7 +53,13 @@ namespace flm
 		if(string.find("~"sv) != std::string::npos)
 		{
 			auto split_id = string::split(string, "~");
-			auto [plugin, form_id_str] = std::make_pair(split_id.at(1), split_id.at(0));
+			if(split_id.size() < 2)
+			{
+				if(log::operating_mode == OperatingMode::INITIALIZE && log::debug_mode)
+					log::Error("Invalid Form format: {}.", string);
+				return nullptr;
+			}
+			auto [plugin, form_id_str] = std::make_pair(split_id[1], split_id[0]);
 			if(form_id_str.size() == 10)
 				form_id_str.erase(2, 2);
 			auto form_id = string::to_num<RE::FormID>(form_id_str, true);
@@ -155,8 +161,8 @@ namespace flm
 	 */
 	inline bool ContainsNonAlpha(const std::string& string)
 	{
-		return std::ranges::find_if(string, [](char c)
-									{ return !std::isalpha(c); }) != string.end();
+		return std::ranges::find_if(string, [](const char c)
+									{ return !std::isalpha(static_cast<unsigned char>(c)); }) != string.end();
 	}
 
 	/**
@@ -255,7 +261,7 @@ namespace flm
 				break;
 
 			conditions.emplace_back(filter.substr(prev, next_position - prev));
-		} while(positions.size() > 1);
+		} while(true);
 		return conditions;
 	}
 
@@ -288,7 +294,7 @@ namespace flm
 					if(log::debug_mode)
 						log::Info("Plugin {} status {}.", plugin_name, plugin_found);
 
-					if(!plugin_found && plugin[0] == '+' || plugin_found && plugin[0] == '-')
+					if((!plugin_found && plugin[0] == '+') || (plugin_found && plugin[0] == '-'))
 					{
 						result = false;
 						break;

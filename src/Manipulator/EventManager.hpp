@@ -36,9 +36,12 @@ namespace flm
 
 	inline RE::BSEventNotifyControl EventManager::ProcessEvent(const SKSE::ModCallbackEvent* aEvent, RE::BSTEventSource<SKSE::ModCallbackEvent>*)
 	{
-		if(auto event_name = aEvent->eventName.c_str(); aEvent && manipulator.GetModEvents().contains(event_name))
+		if(!aEvent)
+			return RE::BSEventNotifyControl::kContinue;
+
+		if(auto event_name = aEvent->eventName.c_str(); manipulator.GetModEvents().contains(event_name))
 		{
-			logger::info("Got event: {}, strArg: {}, numArg: {}.", event_name, aEvent->strArg, aEvent->numArg);
+			logger::info("Got event: {}, strArg: {}, numArg: {}.", event_name, aEvent->strArg.c_str(), aEvent->numArg);
 			auto [added, duplicates] = AddGeneric(manipulator.GetModEvents()[event_name]);
 
 			const auto sent_event_name = fmt::format("{}OK", event_name);
@@ -52,7 +55,7 @@ namespace flm
 			SKSE::GetModCallbackEventSource()->SendEvent(&mod_event);
 			logger::info("Sent event: {}.", sent_event_name);
 		}
-		else if(aEvent && kid && aEvent->eventName == "KID_KeywordDistributionDone")
+		else if(kid && aEvent->eventName == "KID_KeywordDistributionDone")
 		{
 			logger::info("Starting FLM distribution since KID is done...");
 

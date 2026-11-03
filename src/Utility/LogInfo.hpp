@@ -49,21 +49,21 @@ namespace flm::log
 	template<typename... Args>
 	inline void Info(std::string_view format, Args&&... args)
 	{
-		std::string fm = std::vformat(format, std::make_format_args(std::forward<Args>(args)...));
+		std::string fm = std::vformat(format, std::make_format_args(args...));
 		logger::info("{:{}}{}", "", indent_level * 4, fm);
 	}
 
 	template<typename... Args>
 	inline void Warn(std::string_view format, Args&&... args)
 	{
-		std::string fm = std::vformat(format, std::make_format_args(std::forward<Args>(args)...));
+		std::string fm = std::vformat(format, std::make_format_args(args...));
 		logger::warn("{:{}}{}", "", indent_level * 4, fm);
 	}
 
 	template<typename... Args>
 	inline void Error(std::string_view format, Args&&... args)
 	{
-		std::string fm = std::vformat(format, std::make_format_args(std::forward<Args>(args)...));
+		std::string fm = std::vformat(format, std::make_format_args(args...));
 		logger::error("{:{}}{}", "", indent_level * 4, fm);
 	}
 

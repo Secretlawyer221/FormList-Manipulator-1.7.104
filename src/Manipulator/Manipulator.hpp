@@ -361,7 +361,7 @@ namespace flm
 			for(const auto iterator = std::filesystem::directory_iterator(folder_flm); const auto& entry : iterator)
 				if(entry.exists() && !entry.path().empty() && entry.path().extension() == ".ini"sv)
 				{
-					if(entry.path().string() == "FormListManipulator_DEBUG.ini"sv)
+					if(entry.path().filename().string() == "FormListManipulator_DEBUG.ini"sv)
 						continue;
 					configs.push_back(entry.path().string());
 				}
@@ -606,6 +606,16 @@ namespace flm
 			log::Header(header);
 			log::indent_level++;
 		}
+		if(static_cast<size_t>(formType) >= lists_.size() || !lists_[formType])
+		{
+			log::Error("Skipping {}: the target FormList does not exist.", header);
+			if(log::operating_mode == OperatingMode::INITIALIZE)
+			{
+				log::indent_level--;
+				log::Header();
+			}
+			return;
+		}
 		for(const auto& form : forms)
 		{
 			if(lists_[formType]->HasForm(form))
@@ -636,6 +646,16 @@ namespace flm
 		{
 			log::Header(header);
 			log::indent_level++;
+		}
+		if(static_cast<size_t>(formTypes.first) >= lists_.size() || static_cast<size_t>(formTypes.second) >= lists_.size() || !lists_[formTypes.first] || !lists_[formTypes.second])
+		{
+			log::Error("Skipping {}: a target FormList does not exist.", header);
+			if(log::operating_mode == OperatingMode::INITIALIZE)
+			{
+				log::indent_level--;
+				log::Header();
+			}
+			return;
 		}
 		for(auto& [first_form, second_form] : forms)
 		{

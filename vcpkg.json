@@ -9,11 +9,15 @@
         "boost-regex",
         "boost-algorithm",
         "clib-util",
-        "commonlibsse-ng",
+        {
+            "name": "commonlib-shared",
+            "features": [ "xbyak", "random", "ini" ]
+        },
         "mergemapper",
         "rsm-binary-io",
         "tsl-ordered-map",
         "unordered-dense",
-        "simpleini"
+        "simpleini",
+        "spdlog"
     ]
 }

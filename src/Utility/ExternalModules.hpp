@@ -1,10 +1,13 @@
 #pragma once
 
-#undef MessageBox
-#undef GetModuleHandle
 #include "Types/Types.hpp"
 
-namespace winApi = SKSE::WinAPI;
+namespace winApi
+{
+	using HMODULE = ::HMODULE;
+	inline HMODULE GetModuleHandle(const wchar_t* name) { return ::GetModuleHandleW(name); }
+	inline int MessageBox(void* wnd, const char* text, const char* caption, unsigned type) { return ::MessageBoxA(static_cast<HWND>(wnd), text, caption, type); }
+}
 
 namespace flm
 {

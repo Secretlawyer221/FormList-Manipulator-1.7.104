@@ -57,24 +57,6 @@ namespace
 		}
 	}
 
-	/**
-	 * \brief Returns the type of Skyrim that is running. Anniversary Edition, Special Edition, VR or Unknown.
-	 * \return - Type of Skyrim that is running.
-	 */
-	static std::string_view GetRuntimeString()
-	{
-		switch(REL::Module::GetRuntime())
-		{
-			case REL::Module::Runtime::AE:
-				return "Anniversary Edition"sv;
-			case REL::Module::Runtime::SE:
-				return "Special Edition"sv;
-			case REL::Module::Runtime::VR:
-				return "VR"sv;
-			default: ;
-		}
-		return "Unknown"sv;
-	}
 }
 
 /**
@@ -83,11 +65,23 @@ namespace
  * \param skse      - SKSE interface.
  * \return          - True, if everything went fine.
  */
-extern "C" [[maybe_unused]] DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* skse)
+SKSE_PLUGIN_VERSION = []() {
+	SKSE::PluginVersionData v;
+	v.PluginVersion(REL::Version{ Plugin::VERSION });
+	v.PluginName("Formlist Manipulator");
+	v.AuthorName(Plugin::AUTHOR);
+	v.UsesAddressLibrary();
+	v.UsesNoStructs();
+	v.CompatibleVersions({ SKSE::RUNTIME_SSE_LATEST });
+	v.MinimumRequiredXSEVersion(REL::Version{ 2, 3, 0 });
+	return v;
+}();
+
+SKSE_PLUGIN_LOAD(const SKSE::LoadInterface* skse)
 {
 	flm::log::InitializeLog();
 	logger::info("{} v{}"sv, Plugin::NAME, Plugin::VERSION.string());
-	logger::info("Runtime: {}"sv, GetRuntimeString());
+	logger::info("Game version: {}"sv, skse->RuntimeVersion().string());
 
 	SKSE::Init(skse);
 	SKSE::GetMessagingInterface()->RegisterListener(OnEvent);
